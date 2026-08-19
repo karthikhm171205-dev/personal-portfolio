@@ -22,13 +22,11 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-
         const username =
-            document.getElementById("username").value;
+            document.getElementById("username").value.trim();
 
         const password =
             document.getElementById("password").value;
-
 
         loginStatus.textContent =
             "Logging in...";
@@ -38,7 +36,7 @@ loginForm.addEventListener(
 
             const response =
                 await fetch(
-                    "http://localhost:5000/api/admin/login",
+                    "https://personal-portfolio-06gz.onrender.com/api/admin/login",
                     {
                         method: "POST",
 
@@ -60,27 +58,35 @@ loginForm.addEventListener(
 
 
             if (!response.ok) {
-    loginStatus.textContent =
-        data.message || "Login failed.";
-    return;
-}
 
-localStorage.setItem(
-    "adminToken",
-    data.token
-);
+                loginStatus.textContent =
+                    data.message ||
+                    "Login failed.";
 
-loginStatus.textContent =
-    "Login successful!";
+                return;
+            }
 
-projectSection.style.display =
-    "block";
 
-// Load existing projects
-loadAdminProjects();
+            localStorage.setItem(
+                "adminToken",
+                data.token
+            );
 
-loginForm.style.display =
-    "none";
+
+            loginStatus.textContent =
+                "Login successful!";
+
+
+            projectSection.style.display =
+                "block";
+
+
+            loginForm.style.display =
+                "none";
+
+
+            // Load existing projects
+            loadAdminProjects();
 
 
         } catch (error) {
@@ -98,6 +104,9 @@ loginForm.style.display =
 
     }
 );
+
+
+
 // =====================================================
 // ADD PROJECT
 // =====================================================
@@ -132,12 +141,14 @@ projectForm.addEventListener(
         const title =
             document.getElementById(
                 "project-title"
-            ).value;
+            ).value.trim();
+
 
         const description =
             document.getElementById(
                 "project-description"
-            ).value;
+            ).value.trim();
+
 
         const technologies =
             document.getElementById(
@@ -151,12 +162,13 @@ projectForm.addEventListener(
         const githubUrl =
             document.getElementById(
                 "project-github"
-            ).value;
+            ).value.trim();
+
 
         const liveUrl =
             document.getElementById(
                 "project-live"
-            ).value;
+            ).value.trim();
 
 
         projectStatus.textContent =
@@ -167,7 +179,7 @@ projectForm.addEventListener(
 
             const response =
                 await fetch(
-                    "http://localhost:5000/api/projects",
+                    "https://personal-portfolio-06gz.onrender.com/api/projects",
                     {
 
                         method: "POST",
@@ -194,10 +206,10 @@ projectForm.addEventListener(
                                 technologies,
 
                             githubUrl:
-                                githubUrl,
+                                githubUrl || "#",
 
                             liveUrl:
-                                liveUrl
+                                liveUrl || "#"
 
                         })
 
@@ -232,6 +244,10 @@ projectForm.addEventListener(
             );
 
 
+            // Refresh project list
+            loadAdminProjects();
+
+
         } catch (error) {
 
             console.error(
@@ -247,6 +263,9 @@ projectForm.addEventListener(
 
     }
 );
+
+
+
 // =====================================================
 // LOAD ADMIN PROJECTS
 // =====================================================
@@ -263,7 +282,7 @@ async function loadAdminProjects() {
 
         const response =
             await fetch(
-                "http://localhost:5000/api/projects"
+                "https://personal-portfolio-06gz.onrender.com/api/projects"
             );
 
 
@@ -280,7 +299,8 @@ async function loadAdminProjects() {
             await response.json();
 
 
-        adminProjectsContainer.innerHTML = "";
+        adminProjectsContainer.innerHTML =
+            "";
 
 
         if (projects.length === 0) {
@@ -337,7 +357,9 @@ async function loadAdminProjects() {
         });
 
 
-        // Add delete event listeners
+        // =====================================================
+        // DELETE BUTTON EVENTS
+        // =====================================================
 
         document
             .querySelectorAll(".delete-project")
@@ -356,6 +378,7 @@ async function loadAdminProjects() {
 
             });
 
+
     } catch (error) {
 
         console.error(
@@ -363,12 +386,14 @@ async function loadAdminProjects() {
             error
         );
 
+
         adminProjectsContainer.innerHTML =
             "<p>Unable to load projects.</p>";
 
     }
 
 }
+
 
 
 // =====================================================
@@ -398,7 +423,9 @@ async function deleteProject(projectId) {
 
 
     if (!confirmed) {
+
         return;
+
     }
 
 
@@ -406,7 +433,7 @@ async function deleteProject(projectId) {
 
         const response =
             await fetch(
-                `http://localhost:5000/api/projects/${projectId}`,
+                `https://personal-portfolio-06gz.onrender.com/api/projects/${projectId}`,
                 {
 
                     method: "DELETE",
